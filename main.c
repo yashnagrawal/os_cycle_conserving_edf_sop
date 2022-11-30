@@ -27,17 +27,7 @@ int main()
 
 	if (cpu_utilization < 1)
 	{
-		if (worst_cpu_util_check(t, n) == true)
-		{
-			printf("Tasks can be scheduled\n");
-		}
-		else
-		{
-			printf("Schedule is not feasible (worst case)\n");
-			update_alpha_release(t, n, &alpha);
-			printf("Alpha: %f", alpha);
-			return 0;
-		}
+		printf("Tasks can be scheduled\n");
 	}
 	else
 	{
@@ -71,7 +61,7 @@ int main()
 			{
 				if (t[active_task_id].T[execution] == t[active_task_id].T[execution_copy])
 				{
-					update_alpha_release(t, active_task_id, &alpha);
+					update_alpha_release(t, n, active_task_id, &alpha);
 				}
 				t[active_task_id].T[execution_copy]--;
 				printf("%d  Task %d\n", timer, active_task_id + 1);

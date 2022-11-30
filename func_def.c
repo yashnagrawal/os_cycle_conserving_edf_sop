@@ -15,12 +15,13 @@ void get_tasks(task *t1, int n)
 		printf("Enter Task %d parameters\n", i + 1);
 		printf("Arrival time: ");
 		scanf("%d", &t1->T[arrival]);
-		printf("Execution time: ");
-		scanf("%d", &t1->T[execution]);
+		printf("Worst case execution time: ");
+		scanf("%d", &t1->T[worst_case_execution]);
 		printf("Deadline time: ");
 		scanf("%d", &t1->T[deadline]);
 		printf("Period: ");
 		scanf("%d", &t1->T[period]);
+		t1->T[execution] = ((float)(0.9)) * (float)(t1->T[worst_case_execution]); // actual execution time is 90% of worst case time
 		t1->T[abs_arrival] = 0;
 		t1->T[execution_copy] = 0;
 		t1->T[abs_deadline] = 0;
@@ -178,60 +179,58 @@ float cpu_util(task *t1, int n)
 	float cu = 0;
 	while (i < n)
 	{
-		cu = cu + (float)t1->T[execution] / (float)t1->T[deadline];
+		cu = cu + (float)t1->T[execution] / (float)t1->T[period];
 		t1++;
 		i++;
 	}
+
 	return cu;
 }
 
-int worst_cpu_util_check(task *t1, int n)
+void update_alpha_release(task *t1, int n, int active_task_id, float *alpha)
 {
 	int i = 0;
-
-	// c1: the task set is schedulable (passes schedulability test)
-	float cu = 0;
+	*alpha = 0;
 	while (i < n)
 	{
-		cu = cu + (float)t1->T[deadline] / (float)t1->T[period];
+		*alpha += (float)(t1->T[worst_case_execution]) / (float)(t1->T[period]);
 		t1++;
 		i++;
 	}
-	if (cu > 1)
-	{
-		return false;
-	}
-
-	// C2. no task exceeds its specified worst-case computation bound
 	i = 0;
 	while (i < n)
 	{
-		if (t1->T[execution] > t1->T[deadline])
-		{
-			return false;
-		}
-
+		t1->T[execution] = ((float)(t1->T[worst_case_execution]) * (float)(0.9)) / (*alpha);
 		t1++;
 		i++;
-	}
-	return true;
-}
-
-void update_alpha_release(task *t1, int active_task_id, float *alpha)
-{
-	t1 = t1 + active_task_id;
-	if (t1->instance > 0)
-	{
-		*alpha = *alpha - ((float)t1->T[execution] / (float)t1->T[period]) + ((float)t1->T[deadline] / (float)t1->T[period]);
 	}
 	printf("   Release: Aplha scaled to %f\n", *alpha);
 }
 
 void update_alpha_completion(task *t1, int n, int active_task_id, float *alpha)
 {
-
-	t1 = t1 + active_task_id;
-	*alpha = *alpha - ((float)t1->T[deadline] / (float)t1->T[period]) + ((float)t1->T[execution] / (float)t1->T[period]);
+	int i = 0;
+	*alpha = 0;
+	while (i < n)
+	{
+		if (i == active_task_id)
+		{
+			*alpha += (float)(t1->T[worst_case_execution]) * (float)(0.9) / (float)(t1->T[period]);
+		}
+		else
+		{
+			*alpha += (float)(t1->T[worst_case_execution]) / (float)(t1->T[period]);
+		}
+		t1++;
+		i++;
+	}
+	i = 0;
+	while (i < n)
+	{
+		t1->T[execution] = ((float)(t1->T[worst_case_execution]) * (float)(0.9)) / (*alpha);
+		t1++;
+		i++;
+	}
 	printf("   Completion: Aplha scaled to %f\n", *alpha);
 }
 
@@ -241,7 +240,7 @@ void set_alpha(task *t1, int n, float *alpha)
 	float cu = 0;
 	while (i < n)
 	{
-		cu = cu + (float)t1->T[deadline] / (float)t1->T[period];
+		cu = cu + (float)t1->T[worst_case_execution] / (float)t1->T[period];
 		t1++;
 		i++;
 	}

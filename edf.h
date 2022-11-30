@@ -5,7 +5,7 @@
 #define abs_arrival 4
 #define execution_copy 5
 #define abs_deadline 6
-#define alpha_task 7
+#define worst_case_execution 7
 #define false 0
 #define true 1
 
@@ -16,14 +16,15 @@ typedef struct
 	/*
 			These task parameters are given by the user
 			T[0] == T[arrival]  			(Arrival time)
-			T[1] == T[execution]			(Execution time)
-			T[2] == T[deadline] 			(Deadline time)  Ci
+			T[1] == T[actual_execution]		(Execution time)
+			T[2] == T[deadline] 			(Deadline time)
 			T[3] == T[period]  			    (Period) Pi
 
 			These task parameters are internal to the program
 			T[4] == T[abs_arrival]  		(Absolute Arrival time)
 			T[5] == T[execution_copy]	(Execution time copy)
 			T[6] == T[abs_deadline]  	(Absolute Arrival time)
+			T[7] == T[worst_case_execution]  Ci
 
 			instance (Number of times the tasks had arrived since time = 0)
 			alive (Whether the task is ready? 0 for NOT READY and 1 for READY )
@@ -44,7 +45,6 @@ int min(task *t1, int n, int p);						  // Find minimum of given task parameter
 void update_abs_arrival(task *t1, int n, int k, int all); // Update absolute arrival time (absolute arrival time = arrivaltime + instance*period)
 void update_abs_deadline(task *t1, int n, int all);		  // Update absolute deadline (absolute deadline = absolute arrival time + deadline )
 void copy_execution_time(task *t1, int n, int all);		  // Keep a backup copy of execution time
-int worst_cpu_util_check(task *t1, int n);				  // checks if a feasible alpha to scaled down the frequency can be obtained for the current task
 void set_alpha(task *t1, int n, float *alpha);
 void update_alpha_completion(task *t1, int n, int active_task_id, float *alpha); // updates alpha on completion of a task. Reduces alpha to actual cycles used this invocation rather than the worst case computation time
-void update_alpha_release(task *t1, int n, float *alpha);						 // updates alpha on release of a task after it's invocation. Increases alpha to worst case computation time
+void update_alpha_release(task *t1, int n, int active_task_id, float *alpha);	 // updates alpha on release of a task after it's invocation. Increases alpha to worst case computation time
