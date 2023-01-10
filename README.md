@@ -1,6 +1,5 @@
 # Cycle-Conserving Earliest Deadline First
 
-Took implementation of EDF from https://github.com/jabezwinston/Earliest_Deadline_First </br>
 Created 3 custom functions for alpha (scaling factor): 
 void set_alpha(task *t1, int n, float *alpha);
 void update_alpha_completion(task *t1, int n, int active_task_id, float *alpha);
