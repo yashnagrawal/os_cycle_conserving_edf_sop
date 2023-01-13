@@ -1,5 +1,6 @@
 # Cycle-Conserving Earliest Deadline First
 
+Implementation of Cycle-Conserving Earliest Deadline First from the following reasearch paper: https://www.researchgate.net/publication/2548941_Real-Time_Dynamic_Voltage_Scaling_for_Low-Power_Embedded_Operating_Systems
 Created 3 custom functions for alpha (scaling factor): 
 void set_alpha(task *t1, int n, float *alpha);
 void update_alpha_completion(task *t1, int n, int active_task_id, float *alpha);
